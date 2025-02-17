@@ -1,9 +1,9 @@
-const solAddress = '8seutMGHUWJVeV9EVKLcpQLnPyNiu5rn86Wujj5HUAbZ';
 const requestUrl = `https://api.devnet.solana.com`;
 const waitTime = 60000; // 60 seconds cooldown
+let isRunning = false;
 
-async function requestFaucet() {
-    document.getElementById("status").textContent = "Requesting SOL...";
+async function requestFaucet(solAddress) {
+    document.getElementById("status").textContent = `Requesting SOL for ${solAddress}...`;
     try {
         const response = await fetch(requestUrl, {
             method: 'POST',
@@ -25,6 +25,8 @@ async function requestFaucet() {
         if (data.error) {
             document.getElementById("status").textContent = `Error: ${data.error.message}`;
             document.getElementById("link").innerHTML = '';
+            isRunning = false;
+            document.getElementById("startBtn").disabled = false;
         } else {
             document.getElementById("status").textContent = "Airdrop successful!";
             document.getElementById("link").innerHTML = `
@@ -34,21 +36,33 @@ async function requestFaucet() {
         }
     } catch (err) {
         document.getElementById("status").textContent = `Request failed: ${err.message}`;
+        isRunning = false;
+        document.getElementById("startBtn").disabled = false;
     }
 }
 
 async function startLoop() {
-    while (true) {
-        await requestFaucet();
+    const solAddress = document.getElementById("solAddress").value.trim();
+    if (!solAddress) {
+        alert("Please enter a valid Solana address.");
+        return;
+    }
+
+    isRunning = true;
+    document.getElementById("startBtn").disabled = true;
+
+    while (isRunning) {
+        await requestFaucet(solAddress);
+        
+        if (!isRunning) break;
+
         let countdown = waitTime / 1000;
         document.getElementById("cooldown").textContent = `Cooldown: ${countdown} seconds`;
         
-        while (countdown > 0) {
+        while (countdown > 0 && isRunning) {
             await new Promise(resolve => setTimeout(resolve, 1000));
             countdown--;
             document.getElementById("cooldown").textContent = `Cooldown: ${countdown} seconds`;
         }
     }
 }
-
-startLoop();
