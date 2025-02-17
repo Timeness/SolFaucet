@@ -16,6 +16,26 @@
         h1 {
             color: #333;
         }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #ccc;
+        }
         #status {
             margin: 20px 0;
             font-size: 22px;
@@ -33,21 +53,16 @@
         #link a:hover {
             text-decoration: underline;
         }
-        code {
-            background: #eaeaea;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
     <h1>Solana Devnet Faucet</h1>
-    <p>Requesting SOL for address:</p>
-    <code>8seutMGHUWJVeV9EVKLcpQLnPyNiu5rn86Wujj5HUAbZ</code>
+    <p>Enter Solana address to receive SOL:</p>
+    <input type="text" id="solAddress" placeholder="Enter Solana Address">
+    <br>
+    <button onclick="startLoop()" id="startBtn">Start Sending SOL</button>
 
-    <div id="status">Starting...</div>
+    <div id="status">Waiting for address...</div>
     <div id="cooldown"></div>
     <div id="link"></div>
 
